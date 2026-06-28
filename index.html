@@ -7,934 +7,579 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Overtime">
     <title>Overtime Tracker</title>
-    
-    <!-- App Icons -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23grad)'/%3E%3Cpath d='M90 45 L90 95 L120 110' stroke='white' stroke-width='8' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='90' cy='90' r='50' stroke='white' stroke-width='6' fill='none'/%3E%3C/svg%3E">
-    
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%238b5cf6'/%3E%3Cpath d='M50 25 L50 52 L70 60' stroke='white' stroke-width='5' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='50' cy='50' r='28' stroke='white' stroke-width='4' fill='none'/%3E%3C/svg%3E">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overscroll-behavior: none;
-        }
-        
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        input[type="time"],
-        input[type="number"],
-        input[type="date"] {
-            font-size: 16px;
-        }
+        body { margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto',sans-serif; -webkit-font-smoothing:antialiased; overscroll-behavior:none; }
+        * { -webkit-tap-highlight-color:transparent; }
+        input[type="time"], input[type="number"], input[type="date"] { font-size:16px; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        
-        const Clock = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" strokeWidth="2"/>
-                <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const Calendar = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2"/>
-                <line x1="16" y1="2" x2="16" y2="6" strokeWidth="2"/>
-                <line x1="8" y1="2" x2="8" y2="6" strokeWidth="2"/>
-                <line x1="3" y1="10" x2="21" y2="10" strokeWidth="2"/>
-            </svg>
-        );
-        
-        const Download = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round"/>
-                <polyline points="7 10 12 15 17 10" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="12" y1="15" x2="12" y2="3" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const Upload = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round"/>
-                <polyline points="17 8 12 3 7 8" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="12" y1="3" x2="12" y2="15" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const Settings = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3" strokeWidth="2"/>
-                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const Minus = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <line x1="5" y1="12" x2="19" y2="12" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const ChevronRight = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <polyline points="9 18 15 12 9 6" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
-        
-        const Coffee = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M18 8h1a4 4 0 0 1 0 8h-1" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="6" y1="1" x2="6" y2="4" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="10" y1="1" x2="10" y2="4" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="14" y1="1" x2="14" y2="4" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-        );
+const Clock = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2"/><path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Cal = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" strokeWidth="2"/><line x1="16" y1="2" x2="16" y2="6" strokeWidth="2"/><line x1="8" y1="2" x2="8" y2="6" strokeWidth="2"/><line x1="3" y1="10" x2="21" y2="10" strokeWidth="2"/></svg>);
+const DL = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round"/><polyline points="7 10 12 15 17 10" strokeWidth="2" strokeLinecap="round"/><line x1="12" y1="15" x2="12" y2="3" strokeWidth="2" strokeLinecap="round"/></svg>);
+const UL = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" strokeWidth="2" strokeLinecap="round"/><polyline points="17 8 12 3 7 8" strokeWidth="2" strokeLinecap="round"/><line x1="12" y1="3" x2="12" y2="15" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Cog = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" strokeWidth="2"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Min = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Chev = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Cof = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1" strokeWidth="2" strokeLinecap="round"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" strokeWidth="2" strokeLinecap="round"/><line x1="6" y1="1" x2="6" y2="4" strokeWidth="2" strokeLinecap="round"/><line x1="10" y1="1" x2="10" y2="4" strokeWidth="2" strokeLinecap="round"/><line x1="14" y1="1" x2="14" y2="4" strokeWidth="2" strokeLinecap="round"/></svg>);
+const Zap = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+const Trend = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="17 6 23 6 23 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+const Award = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6" strokeWidth="2"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>);
+const File = ({className}) => (<svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="14 2 14 8 20 8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="16" y1="13" x2="8" y2="13" strokeWidth="2" strokeLinecap="round"/><line x1="16" y1="17" x2="8" y2="17" strokeWidth="2" strokeLinecap="round"/></svg>);
 
-        function OvertimeTracker() {
-            const [workStart, setWorkStart] = useState('09:00');
-            const [workEnd, setWorkEnd] = useState('17:00');
-            const [isConfigured, setIsConfigured] = useState(false);
-            const [showSettings, setShowSettings] = useState(false);
-            const [todayEnd, setTodayEnd] = useState('');
-            const [hadLunch, setHadLunch] = useState(true);
-            const [overtimeTotal, setOvertimeTotal] = useState(0);
-            const [logEntries, setLogEntries] = useState([]);
-            const [showLog, setShowLog] = useState(false);
-            const [takeOffAmount, setTakeOffAmount] = useState('');
-            const [viewMode, setViewMode] = useState('days');
-            const [darkMode, setDarkMode] = useState(false);
-            const [showCalendar, setShowCalendar] = useState(false);
-            const [currentMonth, setCurrentMonth] = useState(new Date());
-            const [selectedDateEntry, setSelectedDateEntry] = useState(null);
-            const [showAddRetro, setShowAddRetro] = useState(false);
-            const [retroDate, setRetroDate] = useState('');
-            const [retroEnd, setRetroEnd] = useState('');
-            const [retroLunch, setRetroLunch] = useState(true);
-            const [retroNotes, setRetroNotes] = useState('');
-            const [todayNotes, setTodayNotes] = useState('');
+function App() {
+    const [workStart, setWorkStart] = useState("09:00");
+    const [workEnd, setWorkEnd] = useState("17:00");
+    const [isConfigured, setIsConfigured] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [todayEnd, setTodayEnd] = useState("");
+    const [hadLunch, setHadLunch] = useState(true);
+    const [overtimeTotal, setOvertimeTotal] = useState(0);
+    const [logEntries, setLogEntries] = useState([]);
+    const [showLog, setShowLog] = useState(false);
+    const [takeOffAmount, setTakeOffAmount] = useState("");
+    const [viewMode, setViewMode] = useState("days");
+    const [darkMode, setDarkMode] = useState(false);
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [selectedDateEntry, setSelectedDateEntry] = useState(null);
+    const [showAddRetro, setShowAddRetro] = useState(false);
+    const [retroDate, setRetroDate] = useState("");
+    const [retroEnd, setRetroEnd] = useState("");
+    const [retroLunch, setRetroLunch] = useState(true);
+    const [retroNotes, setRetroNotes] = useState("");
+    const [todayNotes, setTodayNotes] = useState("");
+    const [showWeekly, setShowWeekly] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [quickLogConfirm, setQuickLogConfirm] = useState(false);
 
-            useEffect(() => {
-                const savedStart = localStorage.getItem('workStart');
-                const savedEnd = localStorage.getItem('workEnd');
-                const savedTotal = localStorage.getItem('overtimeTotal');
-                const savedLog = localStorage.getItem('logEntries');
-                const configured = localStorage.getItem('isConfigured');
-                const savedViewMode = localStorage.getItem('viewMode');
-                const savedDarkMode = localStorage.getItem('darkMode');
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+        return () => clearInterval(timer);
+    }, []);
 
-                if (savedStart) setWorkStart(savedStart);
-                if (savedEnd) setWorkEnd(savedEnd);
-                if (savedTotal) setOvertimeTotal(parseFloat(savedTotal));
-                if (savedLog) setLogEntries(JSON.parse(savedLog));
-                if (configured) setIsConfigured(true);
-                if (savedViewMode) setViewMode(savedViewMode);
-                
-                const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedDarkMode !== null) {
-                    setDarkMode(savedDarkMode === 'true');
-                } else {
-                    setDarkMode(systemDarkMode);
-                }
-            }, []);
+    useEffect(() => {
+        const s = localStorage.getItem("workStart");
+        const e = localStorage.getItem("workEnd");
+        const t = localStorage.getItem("overtimeTotal");
+        const l = localStorage.getItem("logEntries");
+        const c = localStorage.getItem("isConfigured");
+        const v = localStorage.getItem("viewMode");
+        const d = localStorage.getItem("darkMode");
+        if (s) setWorkStart(s);
+        if (e) setWorkEnd(e);
+        if (t) setOvertimeTotal(parseFloat(t));
+        if (l) setLogEntries(JSON.parse(l));
+        if (c) setIsConfigured(true);
+        if (v) setViewMode(v);
+        const sys = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (d !== null) setDarkMode(d === "true");
+        else setDarkMode(sys);
+    }, []);
 
-            const saveSettings = () => {
-                localStorage.setItem('workStart', workStart);
-                localStorage.setItem('workEnd', workEnd);
-                localStorage.setItem('isConfigured', 'true');
-                setIsConfigured(true);
-                setShowSettings(false);
-            };
+    const todayStr = new Date().toLocaleDateString("en-GB");
+    const hasLoggedToday = logEntries.some(e => e.date === todayStr && e.type !== "used");
 
-            const resetData = () => {
-                if (window.confirm('Are you sure you want to reset all data? This cannot be undone!')) {
-                    localStorage.clear();
-                    setOvertimeTotal(0);
-                    setLogEntries([]);
-                    setIsConfigured(false);
-                    setShowSettings(false);
-                }
-            };
+    const isPastWorkEnd = () => {
+        const [h, m] = workEnd.split(":").map(Number);
+        return currentTime.getHours() > h || (currentTime.getHours() === h && currentTime.getMinutes() > m);
+    };
+    const isWeekday = () => { const d = currentTime.getDay(); return d >= 1 && d <= 5; };
+    const showReminder = isConfigured && !hasLoggedToday && isPastWorkEnd() && isWeekday();
 
-            const getStandardDayHours = () => {
-                const [startHour, startMin] = workStart.split(':').map(Number);
-                const [endHour, endMin] = workEnd.split(':').map(Number);
-                return ((endHour * 60 + endMin) - (startHour * 60 + startMin) - 60) / 60;
-            };
+    const nowTimeStr = () => {
+        const h = currentTime.getHours().toString().padStart(2, "0");
+        const m = currentTime.getMinutes().toString().padStart(2, "0");
+        return `${h}:${m}`;
+    };
 
-            const calculateOvertimeHours = (endTime, tookLunch) => {
-                const [startHour, startMin] = workStart.split(':').map(Number);
-                const [endHour, endMin] = workEnd.split(':').map(Number);
-                const [actualHour, actualMin] = endTime.split(':').map(Number);
+    const getStdHours = () => {
+        const [sh, sm] = workStart.split(":").map(Number);
+        const [eh, em] = workEnd.split(":").map(Number);
+        return ((eh * 60 + em) - (sh * 60 + sm) - 60) / 60;
+    };
 
-                const lunchDeduction = tookLunch ? 60 : 0;
-                
-                const standardMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin) - 60;
-                const actualMinutes = (actualHour * 60 + actualMin) - (startHour * 60 + startMin) - lunchDeduction;
-                
-                const overtimeMinutes = actualMinutes - standardMinutes;
-                return overtimeMinutes / 60;
-            };
+    const calcOTHours = (endTime, tookLunch) => {
+        const [sh, sm] = workStart.split(":").map(Number);
+        const [eh, em] = workEnd.split(":").map(Number);
+        const [ah, am] = endTime.split(":").map(Number);
+        const lunch = tookLunch ? 60 : 0;
+        const std = (eh * 60 + em) - (sh * 60 + sm) - 60;
+        const actual = (ah * 60 + am) - (sh * 60 + sm) - lunch;
+        return (actual - std) / 60;
+    };
 
-            const toggleViewMode = () => {
-                const newMode = viewMode === 'days' ? 'hours' : 'days';
-                setViewMode(newMode);
-                localStorage.setItem('viewMode', newMode);
-            };
+    const saveSettings = () => {
+        localStorage.setItem("workStart", workStart);
+        localStorage.setItem("workEnd", workEnd);
+        localStorage.setItem("isConfigured", "true");
+        setIsConfigured(true); setShowSettings(false);
+    };
 
-            const toggleDarkMode = () => {
-                const newMode = !darkMode;
-                setDarkMode(newMode);
-                localStorage.setItem('darkMode', newMode.toString());
-            };
+    const resetData = () => {
+        if (window.confirm("Are you sure you want to reset all data?")) {
+            localStorage.clear();
+            setOvertimeTotal(0); setLogEntries([]); setIsConfigured(false); setShowSettings(false);
+        }
+    };
 
-            const getDisplayValue = () => {
-                if (viewMode === 'days') {
-                    return overtimeTotal.toFixed(1);
-                } else {
-                    const standardDayHours = getStandardDayHours();
-                    const totalHours = overtimeTotal * standardDayHours;
-                    return totalHours.toFixed(1);
-                }
-            };
+    const toggleViewMode = () => { const n = viewMode === "days" ? "hours" : "days"; setViewMode(n); localStorage.setItem("viewMode", n); };
+    const toggleDarkMode = () => { const n = !darkMode; setDarkMode(n); localStorage.setItem("darkMode", n.toString()); };
+    const getDisplayValue = () => viewMode === "days" ? overtimeTotal.toFixed(1) : (overtimeTotal * getStdHours()).toFixed(1);
 
-            const getDaysInMonth = (date) => {
-                const year = date.getFullYear();
-                const month = date.getMonth();
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                const daysInMonth = lastDay.getDate();
-                const startingDayOfWeek = firstDay.getDay();
-                
-                return { daysInMonth, startingDayOfWeek, year, month };
-            };
+    const commitLog = (endTime, lunch, notes) => {
+        const hrs = calcOTHours(endTime, lunch);
+        const days = hrs / getStdHours();
+        const newTotal = overtimeTotal + days;
+        const entry = { date: todayStr, endTime, hadLunch: lunch, hours: hrs.toFixed(2), days: days.toFixed(2), notes, type: "earned" };
+        const newLog = [entry, ...logEntries];
+        setOvertimeTotal(newTotal); setLogEntries(newLog);
+        localStorage.setItem("overtimeTotal", newTotal.toString());
+        localStorage.setItem("logEntries", JSON.stringify(newLog));
+    };
 
-            const getEntryForDate = (day) => {
-                const dateStr = `${day.toString().padStart(2, '0')}/${(currentMonth.getMonth() + 1).toString().padStart(2, '0')}/${currentMonth.getFullYear()}`;
-                return logEntries.filter(entry => entry.date === dateStr);
-            };
+    const logOvertime = () => { if (!todayEnd) return; commitLog(todayEnd, hadLunch, todayNotes); setTodayEnd(""); setTodayNotes(""); setHadLunch(true); };
+    const quickLog = () => { commitLog(nowTimeStr(), true, "Quick log"); setQuickLogConfirm(false); };
 
-            const previousMonth = () => {
-                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-            };
+    const logRegularDay = () => {
+        const entry = { date: todayStr, endTime: workEnd, hadLunch: true, hours: "0.00", days: "0.00", type: "regular" };
+        const newLog = [entry, ...logEntries];
+        setLogEntries(newLog); localStorage.setItem("logEntries", JSON.stringify(newLog));
+    };
 
-            const nextMonth = () => {
-                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-            };
+    const logRetroactive = () => {
+        if (!retroDate || !retroEnd) return;
+        const hrs = calcOTHours(retroEnd, retroLunch);
+        const days = hrs / getStdHours();
+        const newTotal = overtimeTotal + days;
+        const [y, mo, d] = retroDate.split("-");
+        const entry = { date: `${d}/${mo}/${y}`, endTime: retroEnd, hadLunch: retroLunch, hours: hrs.toFixed(2), days: days.toFixed(2), notes: retroNotes, type: "earned" };
+        const newLog = [...logEntries, entry].sort((a, b) => new Date(b.date.split("/").reverse().join("-")) - new Date(a.date.split("/").reverse().join("-")));
+        setOvertimeTotal(newTotal); setLogEntries(newLog);
+        localStorage.setItem("overtimeTotal", newTotal.toString());
+        localStorage.setItem("logEntries", JSON.stringify(newLog));
+        setRetroDate(""); setRetroEnd(""); setRetroNotes(""); setRetroLunch(true); setShowAddRetro(false);
+    };
 
-            const logOvertime = () => {
-                if (!todayEnd) return;
+    const takeTimeOff = () => {
+        if (!takeOffAmount || parseFloat(takeOffAmount) <= 0) return;
+        const amt = parseFloat(takeOffAmount);
+        if (amt > overtimeTotal) { alert("Not enough overtime saved!"); return; }
+        const newTotal = overtimeTotal - amt;
+        const entry = { date: todayStr, days: amt.toFixed(2), type: "used", notes: "Time off taken" };
+        const newLog = [entry, ...logEntries];
+        setOvertimeTotal(newTotal); setLogEntries(newLog);
+        localStorage.setItem("overtimeTotal", newTotal.toString());
+        localStorage.setItem("logEntries", JSON.stringify(newLog));
+        setTakeOffAmount("");
+    };
 
-                const overtimeHours = calculateOvertimeHours(todayEnd, hadLunch);
-                const standardDayHours = getStandardDayHours();
-                const overtimeDays = overtimeHours / standardDayHours;
+    const exportCSV = () => {
+        const rows = [["Date","Type","End Time","Had Lunch","Hours","Days","Notes"],
+            ...logEntries.map(e => [e.date, e.type, e.endTime||"", e.hadLunch?"Yes":"No", e.hours||"", e.days||"", e.notes||""])];
+        const csv = rows.map(r => r.join(",")).join("\n");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
+        a.download = `overtime-${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+    };
 
-                const newTotal = overtimeTotal + overtimeDays;
-                const entry = {
-                    date: new Date().toLocaleDateString('en-GB'),
-                    endTime: todayEnd,
-                    hadLunch: hadLunch,
-                    hours: overtimeHours.toFixed(2),
-                    days: overtimeDays.toFixed(2),
-                    notes: todayNotes,
-                    type: 'earned'
-                };
+    const exportJSON = () => {
+        const data = { workStart, workEnd, overtimeTotal, logEntries, exportDate: new Date().toISOString() };
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)], {type:"application/json"}));
+        a.download = `overtime-backup-${new Date().toISOString().split("T")[0]}.json`;
+        a.click();
+    };
 
-                const newLog = [entry, ...logEntries];
-                
-                setOvertimeTotal(newTotal);
-                setLogEntries(newLog);
-                localStorage.setItem('overtimeTotal', newTotal.toString());
-                localStorage.setItem('logEntries', JSON.stringify(newLog));
-                setTodayEnd('');
-                setTodayNotes('');
-                setHadLunch(true);
-            };
+    const importData = (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                setWorkStart(data.workStart); setWorkEnd(data.workEnd);
+                setOvertimeTotal(data.overtimeTotal); setLogEntries(data.logEntries);
+                localStorage.setItem("workStart", data.workStart); localStorage.setItem("workEnd", data.workEnd);
+                localStorage.setItem("overtimeTotal", data.overtimeTotal.toString());
+                localStorage.setItem("logEntries", JSON.stringify(data.logEntries));
+                localStorage.setItem("isConfigured", "true");
+                setIsConfigured(true); alert("Imported successfully!");
+            } catch { alert("Error importing file."); }
+        };
+        reader.readAsText(file);
+    };
 
-            const logRegularDay = () => {
-                const entry = {
-                    date: new Date().toLocaleDateString('en-GB'),
-                    endTime: workEnd,
-                    hadLunch: true,
-                    hours: '0.00',
-                    days: '0.00',
-                    type: 'regular'
-                };
+    const getWeekSummary = () => {
+        const now = new Date(); const dow = now.getDay();
+        const mon = new Date(now); mon.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1)); mon.setHours(0,0,0,0);
+        const entries = logEntries.filter(e => { if (e.type !== "earned") return false; const [d,m,y] = e.date.split("/"); return new Date(`${y}-${m}-${d}`) >= mon; });
+        const totalHrs = entries.reduce((s,e) => s + parseFloat(e.hours||0), 0);
+        const totalDays = entries.reduce((s,e) => s + parseFloat(e.days||0), 0);
+        return { entries, totalHrs: totalHrs.toFixed(1), totalDays: totalDays.toFixed(2) };
+    };
 
-                const newLog = [entry, ...logEntries];
-                setLogEntries(newLog);
-                localStorage.setItem('logEntries', JSON.stringify(newLog));
-            };
+    const getStreak = () => {
+        let streak = 0; const check = new Date();
+        for (let i = 0; i < 30; i++) {
+            if (i > 0) check.setDate(check.getDate() - 1);
+            const day = check.getDay();
+            if (day === 0 || day === 6) continue;
+            if (logEntries.some(e => e.date === check.toLocaleDateString("en-GB"))) streak++;
+            else break;
+        }
+        return streak;
+    };
 
-            const logRetroactive = () => {
-                if (!retroDate || !retroEnd) return;
+    const getDaysInMonth = (date) => ({
+        daysInMonth: new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(),
+        startingDayOfWeek: new Date(date.getFullYear(), date.getMonth(), 1).getDay()
+    });
 
-                const overtimeHours = calculateOvertimeHours(retroEnd, retroLunch);
-                const standardDayHours = getStandardDayHours();
-                const overtimeDays = overtimeHours / standardDayHours;
+    const getEntryForDate = (day) => {
+        const str = `${day.toString().padStart(2,"0")}/${(currentMonth.getMonth()+1).toString().padStart(2,"0")}/${currentMonth.getFullYear()}`;
+        return logEntries.filter(e => e.date === str);
+    };
 
-                const newTotal = overtimeTotal + overtimeDays;
-                
-                const [year, month, day] = retroDate.split('-');
-                const formattedDate = `${day}/${month}/${year}`;
-                
-                const entry = {
-                    date: formattedDate,
-                    endTime: retroEnd,
-                    hadLunch: retroLunch,
-                    hours: overtimeHours.toFixed(2),
-                    days: overtimeDays.toFixed(2),
-                    notes: retroNotes,
-                    type: 'earned'
-                };
+    const dk = darkMode;
+    const bg = dk ? "bg-gradient-to-br from-gray-900 to-slate-900" : "bg-gradient-to-br from-purple-50 to-blue-50";
+    const card = `rounded-2xl shadow-lg ${dk ? "bg-slate-800" : "bg-white"}`;
+    const lbl = `block text-sm font-semibold mb-2 ${dk ? "text-gray-300" : "text-gray-700"}`;
+    const inp = `w-full px-4 py-3 border-2 rounded-xl focus:outline-none ${dk ? "bg-slate-700 border-slate-600 text-white placeholder-gray-500" : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"}`;
+    const txt = dk ? "text-white" : "text-gray-800";
+    const sub = dk ? "text-gray-400" : "text-gray-600";
+    const streak = getStreak();
+    const week = getWeekSummary();
 
-                const newLog = [...logEntries, entry].sort((a, b) => {
-                    const dateA = new Date(a.date.split('/').reverse().join('-'));
-                    const dateB = new Date(b.date.split('/').reverse().join('-'));
-                    return dateB - dateA;
-                });
-                
-                setOvertimeTotal(newTotal);
-                setLogEntries(newLog);
-                localStorage.setItem('overtimeTotal', newTotal.toString());
-                localStorage.setItem('logEntries', JSON.stringify(newLog));
-                setRetroDate('');
-                setRetroEnd('');
-                setRetroNotes('');
-                setRetroLunch(true);
-                setShowAddRetro(false);
-            };
-
-            const takeTimeOff = () => {
-                if (!takeOffAmount || parseFloat(takeOffAmount) <= 0) return;
-
-                const amount = parseFloat(takeOffAmount);
-                if (amount > overtimeTotal) {
-                    alert('You don\'t have that much overtime saved!');
-                    return;
-                }
-
-                const newTotal = overtimeTotal - amount;
-                const entry = {
-                    date: new Date().toLocaleDateString('en-GB'),
-                    days: amount.toFixed(2),
-                    type: 'used',
-                    notes: 'Time off taken'
-                };
-
-                const newLog = [entry, ...logEntries];
-                
-                setOvertimeTotal(newTotal);
-                setLogEntries(newLog);
-                localStorage.setItem('overtimeTotal', newTotal.toString());
-                localStorage.setItem('logEntries', JSON.stringify(newLog));
-                setTakeOffAmount('');
-            };
-
-            const exportData = () => {
-                const data = {
-                    workStart,
-                    workEnd,
-                    overtimeTotal,
-                    logEntries,
-                    exportDate: new Date().toISOString()
-                };
-                
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `overtime-backup-${new Date().toISOString().split('T')[0]}.json`;
-                a.click();
-            };
-
-            const importData = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        setWorkStart(data.workStart);
-                        setWorkEnd(data.workEnd);
-                        setOvertimeTotal(data.overtimeTotal);
-                        setLogEntries(data.logEntries);
-                        
-                        localStorage.setItem('workStart', data.workStart);
-                        localStorage.setItem('workEnd', data.workEnd);
-                        localStorage.setItem('overtimeTotal', data.overtimeTotal.toString());
-                        localStorage.setItem('logEntries', JSON.stringify(data.logEntries));
-                        localStorage.setItem('isConfigured', 'true');
-                        
-                        setIsConfigured(true);
-                        alert('Data imported successfully!');
-                    } catch (error) {
-                        alert('Error importing file. Please check the file format.');
-                    }
-                };
-                reader.readAsText(file);
-            };
-
-            if (!isConfigured || showSettings) {
-                return (
-                    <div className={`min-h-screen p-4 ${darkMode ? 'bg-gradient-to-br from-gray-900 to-slate-900' : 'bg-gradient-to-br from-purple-50 to-blue-50'}`}>
-                        <div className="max-w-md mx-auto pt-8">
-                            <div className={`rounded-3xl shadow-xl p-8 ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                                <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl mx-auto mb-6">
-                                    <Settings className="w-8 h-8 text-white" />
-                                </div>
-                                
-                                <h2 className={`text-2xl font-bold text-center mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Work Hours Setup</h2>
-                                <p className={`text-center mb-8 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Set your standard working hours</p>
-                                
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Start Time</label>
-                                        <input
-                                            type="time"
-                                            value={workStart}
-                                            onChange={(e) => setWorkStart(e.target.value)}
-                                            className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:outline-none text-lg ${
-                                                darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-200 text-gray-900'
-                                            }`}
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>End Time</label>
-                                        <input
-                                            type="time"
-                                            value={workEnd}
-                                            onChange={(e) => setWorkEnd(e.target.value)}
-                                            className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:outline-none text-lg ${
-                                                darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-200 text-gray-900'
-                                            }`}
-                                        />
-                                    </div>
-                                    
-                                    <div className={`rounded-xl p-4 ${darkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
-                                        <p className={`text-sm ${darkMode ? 'text-blue-300' : 'text-blue-800'}`}>
-                                            <strong>Note:</strong> A 1-hour lunch break will be assumed by default, but you can toggle it off when logging each day.
-                                        </p>
-                                    </div>
-                                    
-                                    <button
-                                        onClick={saveSettings}
-                                        className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
-                                    >
-                                        Save Settings
-                                    </button>
-                                    
-                                    {isConfigured && (
-                                        <>
-                                            <button
-                                                onClick={() => setShowSettings(false)}
-                                                className={`w-full py-3 rounded-xl font-semibold ${
-                                                    darkMode ? 'bg-slate-700 text-gray-300' : 'bg-gray-200 text-gray-700'
-                                                }`}
-                                            >
-                                                Cancel
-                                            </button>
-                                            
-                                            <button
-                                                onClick={resetData}
-                                                className={`w-full py-3 rounded-xl font-semibold transition-all ${
-                                                    darkMode ? 'bg-red-900/50 text-red-300 hover:bg-red-900/70' : 'bg-red-100 text-red-600 hover:bg-red-200'
-                                                }`}
-                                            >
-                                                Reset All Data
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
+    if (!isConfigured || showSettings) {
+        return (
+            <div className={`min-h-screen p-4 ${bg}`}>
+                <div className="max-w-md mx-auto pt-8">
+                    <div className={`rounded-3xl shadow-xl p-8 ${dk ? "bg-slate-800" : "bg-white"}`}>
+                        <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl mx-auto mb-6">
+                            <Cog className="w-8 h-8 text-white" />
                         </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className={`min-h-screen pb-20 ${darkMode ? 'bg-gradient-to-br from-gray-900 to-slate-900' : 'bg-gradient-to-br from-purple-50 to-blue-50'}`}>
-                    <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white p-6 rounded-b-3xl shadow-lg">
-                        <div className="max-w-md mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <h1 className="text-2xl font-bold">Overtime Tracker</h1>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={toggleDarkMode}
-                                        className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all"
-                                        title={darkMode ? 'Light Mode' : 'Dark Mode'}
-                                    >
-                                        {darkMode ? '☀️' : '🌙'}
-                                    </button>
-                                    <button
-                                        onClick={() => setShowSettings(true)}
-                                        className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all"
-                                    >
-                                        <Settings className="w-6 h-6" />
-                                    </button>
-                                </div>
+                        <h2 className={`text-2xl font-bold text-center mb-2 ${txt}`}>Work Hours Setup</h2>
+                        <p className={`text-center mb-8 ${sub}`}>Set your standard working hours</p>
+                        <div className="space-y-6">
+                            <div><label className={lbl}>Start Time</label><input type="time" value={workStart} onChange={e=>setWorkStart(e.target.value)} className={inp} /></div>
+                            <div><label className={lbl}>End Time</label><input type="time" value={workEnd} onChange={e=>setWorkEnd(e.target.value)} className={inp} /></div>
+                            <div className={`rounded-xl p-4 ${dk ? "bg-blue-900/30" : "bg-blue-50"}`}>
+                                <p className={`text-sm ${dk ? "text-blue-300" : "text-blue-800"}`}><strong>Note:</strong> 1-hour lunch break assumed by default, togglable each day.</p>
                             </div>
-                            
-                            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                                <div className="text-center">
-                                    <p className="text-white/80 text-sm mb-2">Total Overtime Accrued</p>
-                                    <p className="text-5xl font-bold mb-1">{getDisplayValue()}</p>
-                                    <div className="flex items-center justify-center gap-2">
-                                        <button
-                                            onClick={toggleViewMode}
-                                            className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white/90 text-sm font-semibold transition-all"
-                                        >
-                                            {viewMode === 'days' ? 'days' : 'hours'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="max-w-md mx-auto px-4 mt-6 space-y-4">
-                        <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                            <div className="flex items-center mb-4">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${darkMode ? 'bg-purple-900/50' : 'bg-purple-100'}`}>
-                                    <Clock className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} />
-                                </div>
-                                <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Log Today</h2>
-                            </div>
-                            
-                            <div className="space-y-3">
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Finish Time</label>
-                                    <input
-                                        type="time"
-                                        value={todayEnd}
-                                        onChange={(e) => setTodayEnd(e.target.value)}
-                                        className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:outline-none ${
-                                            darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-200 text-gray-900'
-                                        }`}
-                                    />
-                                </div>
-                                
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Did you take a lunch break?</label>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={() => setHadLunch(true)}
-                                            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
-                                                hadLunch 
-                                                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md' 
-                                                    : darkMode ? 'bg-slate-700 text-gray-400' : 'bg-gray-100 text-gray-600'
-                                            }`}
-                                        >
-                                            <div className="flex items-center justify-center gap-2">
-                                                <Coffee className="w-5 h-5" />
-                                                Yes
-                                            </div>
-                                        </button>
-                                        <button
-                                            onClick={() => setHadLunch(false)}
-                                            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
-                                                !hadLunch 
-                                                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md' 
-                                                    : darkMode ? 'bg-slate-700 text-gray-400' : 'bg-gray-100 text-gray-600'
-                                            }`}
-                                        >
-                                            No Break
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Notes (optional)</label>
-                                    <input
-                                        type="text"
-                                        value={todayNotes}
-                                        onChange={(e) => setTodayNotes(e.target.value)}
-                                        placeholder="e.g., Client meeting ran late"
-                                        className={`w-full px-4 py-3 border-2 rounded-xl focus:border-purple-500 focus:outline-none ${
-                                            darkMode ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400'
-                                        }`}
-                                    />
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button
-                                        onClick={logOvertime}
-                                        disabled={!todayEnd}
-                                        className="bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all"
-                                    >
-                                        Log Hours
-                                    </button>
-                                    
-                                    <button
-                                        onClick={logRegularDay}
-                                        className={`py-3 rounded-xl font-semibold transition-all ${
-                                            darkMode ? 'bg-slate-700 text-gray-300 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                        }`}
-                                    >
-                                        Regular Day
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={`rounded-2xl shadow-lg overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                            <button
-                                onClick={() => setShowCalendar(!showCalendar)}
-                                className={`w-full p-6 flex items-center justify-between transition-all ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-50'}`}
-                            >
-                                <div className="flex items-center">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${darkMode ? 'bg-green-900/50' : 'bg-green-100'}`}>
-                                        <Calendar className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-500'}`} />
-                                    </div>
-                                    <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Calendar View</h2>
-                                </div>
-                                <ChevronRight className={`w-6 h-6 transition-transform ${showCalendar ? 'rotate-90' : ''} ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                            </button>
-                            
-                            {showCalendar && (
-                                <div className={`border-t p-4 ${darkMode ? 'border-slate-700' : 'border-gray-100'}`}>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <button
-                                            onClick={previousMonth}
-                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
-                                        >
-                                            <ChevronRight className={`w-5 h-5 rotate-180 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-                                        </button>
-                                        <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                            {currentMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
-                                        </h3>
-                                        <button
-                                            onClick={nextMonth}
-                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
-                                        >
-                                            <ChevronRight className={`w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-                                        </button>
-                                    </div>
-
-                                    <div className="grid grid-cols-7 gap-1 mb-2">
-                                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                                            <div key={i} className={`text-center text-xs font-semibold py-2 ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>
-                                                {day}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="grid grid-cols-7 gap-1">
-                                        {(() => {
-                                            const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
-                                            const cells = [];
-                                            
-                                            for (let i = 0; i < startingDayOfWeek; i++) {
-                                                cells.push(<div key={`empty-${i}`} className="aspect-square" />);
-                                            }
-                                            
-                                            for (let day = 1; day <= daysInMonth; day++) {
-                                                const entries = getEntryForDate(day);
-                                                const hasEarned = entries.some(e => e.type === 'earned');
-                                                const hasUsed = entries.some(e => e.type === 'used');
-                                                
-                                                cells.push(
-                                                    <button
-                                                        key={day}
-                                                        onClick={() => entries.length > 0 && setSelectedDateEntry(entries)}
-                                                        className={`aspect-square rounded-lg flex items-center justify-center text-sm font-semibold transition-all
-                                                            ${hasEarned ? 'bg-green-500 text-white hover:bg-green-600' : ''}
-                                                            ${hasUsed ? 'bg-red-500 text-white hover:bg-red-600' : ''}
-                                                            ${!hasEarned && !hasUsed ? (darkMode ? 'text-gray-400 hover:bg-slate-700' : 'text-gray-700 hover:bg-gray-100') : ''}
-                                                        `}
-                                                    >
-                                                        {day}
-                                                    </button>
-                                                );
-                                            }
-                                            
-                                            return cells;
-                                        })()}
-                                    </div>
-
-                                    <button
-                                        onClick={() => setShowAddRetro(!showAddRetro)}
-                                        className="w-full mt-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
-                                    >
-                                        + Add Past Overtime
-                                    </button>
-
-                                    {showAddRetro && (
-                                        <div className="mt-4 space-y-3 pt-4 border-t border-gray-200 dark:border-slate-700">
-                                            <div>
-                                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Date</label>
-                                                <input
-                                                    type="date"
-                                                    value={retroDate}
-                                                    onChange={(e) => setRetroDate(e.target.value)}
-                                                    className={`w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-500 focus:outline-none ${
-                                                        darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-200 text-gray-900'
-                                                    }`}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Finish Time</label>
-                                                <input
-                                                    type="time"
-                                                    value={retroEnd}
-                                                    onChange={(e) => setRetroEnd(e.target.value)}
-                                                    className={`w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-500 focus:outline-none ${
-                                                        darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-200 text-gray-900'
-                                                    }`}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className={`block text-sm font-semibold mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Lunch break?</label>
-                                                <div className="flex gap-3">
-                                                    <button
-                                                        onClick={() => setRetroLunch(true)}
-                                                        className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
-                                                            retroLunch 
-                                                                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md' 
-                                                                : darkMode ? 'bg-slate-700 text-gray-400' : 'bg-gray-100 text-gray-600'
-                                                        }`}
-                                                    >
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            <Coffee className="w-5 h-5" />
-                                                            Yes
-                                                        </div>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setRetroLunch(false)}
-                                                        className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
-                                                            !retroLunch 
-                                                                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md' 
-                                                                : darkMode ? 'bg-slate-700 text-gray-400' : 'bg-gray-100 text-gray-600'
-                                                        }`}
-                                                    >
-                                                        No Break
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Notes (optional)</label>
-                                                <textarea
-                                                    value={retroNotes}
-                                                    onChange={(e) => setRetroNotes(e.target.value)}
-                                                    placeholder="e.g., Emergency deployment"
-                                                    rows="2"
-                                                    className={`w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-500 focus:outline-none resize-none ${
-                                                        darkMode ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400'
-                                                    }`}
-                                                />
-                                            </div>
-
-                                            <button
-                                                onClick={logRetroactive}
-                                                disabled={!retroDate || !retroEnd}
-                                                className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all"
-                                            >
-                                                Add Past Entry
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {selectedDateEntry && (
-                                        <div className={`mt-4 p-4 rounded-xl ${darkMode ? 'bg-slate-700' : 'bg-gray-50'}`}>
-                                            <div className="flex justify-between items-start mb-3">
-                                                <h4 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                                                    {selectedDateEntry[0].date}
-                                                </h4>
-                                                <button
-                                                    onClick={() => setSelectedDateEntry(null)}
-                                                    className={`text-sm ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                                                >
-                                                    ✕
-                                                </button>
-                                            </div>
-                                            
-                                            {selectedDateEntry.map((entry, idx) => (
-                                                <div key={idx} className={`mb-3 last:mb-0 pb-3 last:pb-0 ${idx < selectedDateEntry.length - 1 ? 'border-b' : ''} ${darkMode ? 'border-slate-600' : 'border-gray-200'}`}>
-                                                    {entry.type === 'earned' && (
-                                                        <>
-                                                            <p className="text-green-600 font-bold text-lg">+{entry.hours} hrs ({entry.days} days)</p>
-                                                            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                                Finished at {entry.endTime}
-                                                            </p>
-                                                            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                                                                {entry.hadLunch ? '✓ Had lunch break' : '✗ No lunch break'}
-                                                            </p>
-                                                            {entry.notes && (
-                                                                <div className={`mt-3 p-3 rounded-lg ${darkMode ? 'bg-slate-600' : 'bg-indigo-50'}`}>
-                                                                    <p className={`text-xs font-semibold mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Notes:</p>
-                                                                    <p className={`text-sm ${darkMode ? 'text-indigo-300' : 'text-indigo-700'}`}>
-                                                                        {entry.notes}
-                                                                    </p>
-                                                                </div>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                    {entry.type === 'used' && (
-                                                        <>
-                                                            <p className="text-red-600 font-bold text-lg">-{entry.days} days</p>
-                                                            <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                                Time off taken
-                                                            </p>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                            <div className="flex items-center mb-4">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${darkMode ? 'bg-blue-900/50' : 'bg-blue-100'}`}>
-                                    <Minus className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} />
-                                </div>
-                                <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Use Overtime</h2>
-                            </div>
-                            
-                            <div className="space-y-3">
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Days to Use</label>
-                                    <input
-                                        type="number"
-                                        step="0.5"
-                                        value={takeOffAmount}
-                                        onChange={(e) => setTakeOffAmount(e.target.value)}
-                                        placeholder="0.5"
-                                        className={`w-full px-4 py-3 border-2 rounded-xl focus:border-blue-500 focus:outline-none ${
-                                            darkMode ? 'bg-slate-700 border-slate-600 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900'
-                                        }`}
-                                    />
-                                </div>
-                                
-                                <button
-                                    onClick={takeTimeOff}
-                                    disabled={!takeOffAmount}
-                                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all"
-                                >
-                                    Use Time Off
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className={`rounded-2xl shadow-lg overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                            <button
-                                onClick={() => setShowLog(!showLog)}
-                                className={`w-full p-6 flex items-center justify-between transition-all ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-50'}`}
-                            >
-                                <div className="flex items-center">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${darkMode ? 'bg-green-900/50' : 'bg-green-100'}`}>
-                                        <Calendar className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-500'}`} />
-                                    </div>
-                                    <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>History</h2>
-                                </div>
-                                <ChevronRight className={`w-6 h-6 transition-transform ${showLog ? 'rotate-90' : ''} ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                            </button>
-                            
-                            {showLog && (
-                                <div className={`border-t ${darkMode ? 'border-slate-700' : 'border-gray-100'}`}>
-                                    {logEntries.length === 0 ? (
-                                        <p className={`p-6 text-center ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>No entries yet</p>
-                                    ) : (
-                                        <div className="max-h-96 overflow-y-auto">
-                                            {logEntries.map((entry, idx) => (
-                                                <div key={idx} className={`p-4 border-b last:border-b-0 transition-all ${
-                                                    darkMode ? 'border-slate-700 hover:bg-slate-700' : 'border-gray-100 hover:bg-gray-50'
-                                                }`}>
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{entry.date}</p>
-                                                            {entry.type === 'earned' && (
-                                                                <>
-                                                                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Finished at {entry.endTime}</p>
-                                                                    <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                                                                        {entry.hadLunch ? '✓ Had lunch break' : '✗ No lunch break'}
-                                                                    </p>
-                                                                    {entry.notes && (
-                                                                        <p className={`text-xs italic mt-1 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
-                                                                            "{entry.notes}"
-                                                                        </p>
-                                                                    )}
-                                                                </>
-                                                            )}
-                                                            {entry.type === 'regular' && (
-                                                                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Regular day</p>
-                                                            )}
-                                                        </div>
-                                                        <div className="text-right">
-                                                            {entry.type === 'earned' && (
-                                                                <>
-                                                                    <p className="text-green-600 font-bold">+{entry.hours} hrs</p>
-                                                                    <p className="text-xs text-green-600/70">{entry.days} days</p>
-                                                                </>
-                                                            )}
-                                                            {entry.type === 'used' && (
-                                                                <p className="text-red-600 font-bold">-{entry.days} days</p>
-                                                            )}
-                                                            {entry.type === 'regular' && (
-                                                                <p className={`font-bold ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>0 hrs</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={`rounded-2xl shadow-lg p-6 ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                            <h2 className={`text-xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Backup & Restore</h2>
-                            
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    onClick={exportData}
-                                    className="flex items-center justify-center gap-2 bg-green-500 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
-                                >
-                                    <Download className="w-5 h-5" />
-                                    Export
-                                </button>
-                                
-                                <label className="flex items-center justify-center gap-2 bg-blue-500 text-white py-3 rounded-xl font-semibold cursor-pointer shadow-md hover:shadow-lg transition-all">
-                                    <Upload className="w-5 h-5" />
-                                    Import
-                                    <input
-                                        type="file"
-                                        accept=".json"
-                                        onChange={importData}
-                                        className="hidden"
-                                    />
-                                </label>
-                            </div>
+                            <button onClick={saveSettings} className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-4 rounded-xl font-semibold text-lg shadow-lg">Save Settings</button>
+                            {isConfigured && (<>
+                                <button onClick={()=>setShowSettings(false)} className={`w-full py-3 rounded-xl font-semibold ${dk?"bg-slate-700 text-gray-300":"bg-gray-200 text-gray-700"}`}>Cancel</button>
+                                <button onClick={resetData} className={`w-full py-3 rounded-xl font-semibold ${dk?"bg-red-900/50 text-red-300":"bg-red-100 text-red-600"}`}>Reset All Data</button>
+                            </>)}
                         </div>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
+    }
 
-        ReactDOM.render(<OvertimeTracker />, document.getElementById('root'));
-    </script>
+    return (
+        <div className={`min-h-screen pb-20 ${bg}`}>
+
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white p-6 rounded-b-3xl shadow-lg">
+                <div className="max-w-md mx-auto">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold">Overtime Tracker</h1>
+                        <div className="flex gap-2">
+                            <button onClick={toggleDarkMode} className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all">{dk?"☀️":"🌙"}</button>
+                            <button onClick={()=>setShowSettings(true)} className="p-2 bg-white/20 rounded-xl hover:bg-white/30 transition-all"><Cog className="w-6 h-6"/></button>
+                        </div>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
+                        <p className="text-white/80 text-sm mb-1">Total Overtime Accrued</p>
+                        <p className="text-5xl font-bold mb-2">{getDisplayValue()}</p>
+                        <button onClick={toggleViewMode} className="px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white/90 text-sm font-semibold transition-all">{viewMode==="days"?"days":"hours"}</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                        <div className="bg-white/10 rounded-xl p-3 text-center"><p className="text-white/70 text-xs mb-1">🔥 Streak</p><p className="text-white font-bold text-lg">{streak} day{streak!==1?"s":""}</p></div>
+                        <div className="bg-white/10 rounded-xl p-3 text-center"><p className="text-white/70 text-xs mb-1">📅 This Week</p><p className="text-white font-bold text-lg">{week.totalHrs} hrs</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-md mx-auto px-4 mt-4 space-y-4">
+
+                {/* Reminder Banner */}
+                {showReminder && (
+                    <div className="bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-4 shadow-lg">
+                        <p className="text-white font-bold text-sm mb-3">⏰ You haven't logged today yet!</p>
+                        {!quickLogConfirm ? (
+                            <div className="flex gap-2">
+                                <button onClick={()=>setQuickLogConfirm(true)} className="flex-1 bg-white text-orange-600 py-2 rounded-xl font-semibold text-sm flex items-center justify-center gap-1">
+                                    <Zap className="w-4 h-4"/> Finishing now ({nowTimeStr()})
+                                </button>
+                                <button onClick={logRegularDay} className="flex-1 bg-white/30 text-white py-2 rounded-xl font-semibold text-sm">Regular day</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="text-white text-sm mb-2">Log finish time as <strong>{nowTimeStr()}</strong>?</p>
+                                <div className="flex gap-2">
+                                    <button onClick={quickLog} className="flex-1 bg-white text-orange-600 py-2 rounded-xl font-semibold text-sm">✓ Yes, log it</button>
+                                    <button onClick={()=>setQuickLogConfirm(false)} className="flex-1 bg-white/30 text-white py-2 rounded-xl font-semibold text-sm">✕ Cancel</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Weekly Summary */}
+                <div className={`${card} overflow-hidden`}>
+                    <button onClick={()=>setShowWeekly(!showWeekly)} className={`w-full p-5 flex items-center justify-between ${dk?"hover:bg-slate-700":"hover:bg-gray-50"}`}>
+                        <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${dk?"bg-purple-900/50":"bg-purple-100"}`}><Trend className={`w-6 h-6 ${dk?"text-purple-400":"text-purple-500"}`}/></div>
+                            <div className="text-left">
+                                <h2 className={`text-lg font-bold ${txt}`}>Weekly Summary</h2>
+                                <p className={`text-xs ${sub}`}>{week.totalHrs} hrs · {week.totalDays} days this week</p>
+                            </div>
+                        </div>
+                        <Chev className={`w-5 h-5 transition-transform ${showWeekly?"rotate-90":""} ${dk?"text-gray-500":"text-gray-400"}`}/>
+                    </button>
+                    {showWeekly && (
+                        <div className={`border-t p-4 ${dk?"border-slate-700":"border-gray-100"}`}>
+                            {week.entries.length === 0 ? (
+                                <p className={`text-center py-2 text-sm ${sub}`}>No overtime logged this week</p>
+                            ) : (
+                                <div className="space-y-2">
+                                    {week.entries.map((e,i)=>(
+                                        <div key={i} className={`flex justify-between items-center p-3 rounded-xl ${dk?"bg-slate-700":"bg-gray-50"}`}>
+                                            <div>
+                                                <p className={`text-sm font-semibold ${txt}`}>{e.date}</p>
+                                                {e.notes && <p className={`text-xs italic ${dk?"text-indigo-400":"text-indigo-600"}`}>"{e.notes}"</p>}
+                                            </div>
+                                            <p className="text-green-500 font-bold text-sm">+{e.hours} hrs</p>
+                                        </div>
+                                    ))}
+                                    <div className={`flex justify-between p-3 rounded-xl font-bold ${dk?"bg-purple-900/30 text-purple-300":"bg-purple-50 text-purple-700"}`}>
+                                        <span>Total</span><span>{week.totalHrs} hrs</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Log Today */}
+                <div className={`${card} p-6`}>
+                    <div className="flex items-center mb-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${dk?"bg-purple-900/50":"bg-purple-100"}`}><Clock className={`w-6 h-6 ${dk?"text-purple-400":"text-purple-500"}`}/></div>
+                        <div>
+                            <h2 className={`text-xl font-bold ${txt}`}>Log Today</h2>
+                            {hasLoggedToday && <p className="text-green-500 text-xs font-semibold">✓ Logged today</p>}
+                        </div>
+                        <button onClick={()=>setQuickLogConfirm(!quickLogConfirm)} className="ml-auto flex items-center gap-1 bg-gradient-to-r from-amber-400 to-orange-400 text-white px-3 py-2 rounded-xl text-xs font-bold shadow">
+                            <Zap className="w-3 h-3"/> Now ({nowTimeStr()})
+                        </button>
+                    </div>
+                    {quickLogConfirm && (
+                        <div className={`mb-3 p-3 rounded-xl ${dk?"bg-slate-700":"bg-amber-50"}`}>
+                            <p className={`text-sm mb-2 ${txt}`}>Log finish as <strong>{nowTimeStr()}</strong> with lunch?</p>
+                            <div className="flex gap-2">
+                                <button onClick={quickLog} className="flex-1 bg-gradient-to-r from-amber-400 to-orange-400 text-white py-2 rounded-lg font-semibold text-sm">✓ Yes</button>
+                                <button onClick={()=>setQuickLogConfirm(false)} className={`flex-1 py-2 rounded-lg font-semibold text-sm ${dk?"bg-slate-600 text-gray-300":"bg-gray-200 text-gray-600"}`}>✕ No</button>
+                            </div>
+                        </div>
+                    )}
+                    <div className="space-y-3">
+                        <div><label className={lbl}>Finish Time</label><input type="time" value={todayEnd} onChange={e=>setTodayEnd(e.target.value)} className={`${inp} focus:border-purple-500`}/></div>
+                        <div>
+                            <label className={lbl}>Lunch break?</label>
+                            <div className="flex gap-3">
+                                <button onClick={()=>setHadLunch(true)} className={`flex-1 py-3 rounded-xl font-semibold transition-all ${hadLunch?"bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md":dk?"bg-slate-700 text-gray-400":"bg-gray-100 text-gray-600"}`}>
+                                    <div className="flex items-center justify-center gap-2"><Cof className="w-5 h-5"/>Yes</div>
+                                </button>
+                                <button onClick={()=>setHadLunch(false)} className={`flex-1 py-3 rounded-xl font-semibold transition-all ${!hadLunch?"bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md":dk?"bg-slate-700 text-gray-400":"bg-gray-100 text-gray-600"}`}>No Break</button>
+                            </div>
+                        </div>
+                        <div><label className={lbl}>Notes (optional)</label><input type="text" value={todayNotes} onChange={e=>setTodayNotes(e.target.value)} placeholder="e.g. Client meeting ran late" className={`${inp} focus:border-purple-500`}/></div>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button onClick={logOvertime} disabled={!todayEnd} className="bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50 shadow-md">Log Hours</button>
+                            <button onClick={logRegularDay} className={`py-3 rounded-xl font-semibold ${dk?"bg-slate-700 text-gray-300":"bg-gray-200 text-gray-700"}`}>Regular Day</button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Calendar */}
+                <div className={`${card} overflow-hidden`}>
+                    <button onClick={()=>setShowCalendar(!showCalendar)} className={`w-full p-6 flex items-center justify-between ${dk?"hover:bg-slate-700":"hover:bg-gray-50"}`}>
+                        <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${dk?"bg-green-900/50":"bg-green-100"}`}><Cal className={`w-6 h-6 ${dk?"text-green-400":"text-green-500"}`}/></div>
+                            <h2 className={`text-xl font-bold ${txt}`}>Calendar View</h2>
+                        </div>
+                        <Chev className={`w-6 h-6 transition-transform ${showCalendar?"rotate-90":""} ${dk?"text-gray-500":"text-gray-400"}`}/>
+                    </button>
+                    {showCalendar && (
+                        <div className={`border-t p-4 ${dk?"border-slate-700":"border-gray-100"}`}>
+                            <div className="flex items-center justify-between mb-4">
+                                <button onClick={()=>setCurrentMonth(new Date(currentMonth.getFullYear(),currentMonth.getMonth()-1))} className={`p-2 rounded-lg ${dk?"hover:bg-slate-700":"hover:bg-gray-100"}`}><Chev className={`w-5 h-5 rotate-180 ${dk?"text-gray-400":"text-gray-600"}`}/></button>
+                                <h3 className={`text-lg font-bold ${txt}`}>{currentMonth.toLocaleDateString("en-GB",{month:"long",year:"numeric"})}</h3>
+                                <button onClick={()=>setCurrentMonth(new Date(currentMonth.getFullYear(),currentMonth.getMonth()+1))} className={`p-2 rounded-lg ${dk?"hover:bg-slate-700":"hover:bg-gray-100"}`}><Chev className={`w-5 h-5 ${dk?"text-gray-400":"text-gray-600"}`}/></button>
+                            </div>
+                            <div className="grid grid-cols-7 gap-1 mb-1">
+                                {["S","M","T","W","T","F","S"].map((d,i)=><div key={i} className={`text-center text-xs font-semibold py-1 ${dk?"text-gray-500":"text-gray-500"}`}>{d}</div>)}
+                            </div>
+                            <div className="grid grid-cols-7 gap-1">
+                                {(()=>{
+                                    const {daysInMonth,startingDayOfWeek} = getDaysInMonth(currentMonth);
+                                    const cells = [];
+                                    for(let i=0;i<startingDayOfWeek;i++) cells.push(<div key={`e${i}`} className="aspect-square"/>);
+                                    for(let day=1;day<=daysInMonth;day++){
+                                        const entries = getEntryForDate(day);
+                                        const earned = entries.some(e=>e.type==="earned");
+                                        const used = entries.some(e=>e.type==="used");
+                                        cells.push(
+                                            <button key={day} onClick={()=>entries.length>0&&setSelectedDateEntry(entries)}
+                                                className={`aspect-square rounded-lg flex items-center justify-center text-sm font-semibold transition-all
+                                                    ${earned?"bg-green-500 text-white hover:bg-green-600":""}
+                                                    ${used&&!earned?"bg-red-500 text-white hover:bg-red-600":""}
+                                                    ${!earned&&!used?dk?"text-gray-400 hover:bg-slate-700":"text-gray-700 hover:bg-gray-100":""}
+                                                `}
+                                            >{day}</button>
+                                        );
+                                    }
+                                    return cells;
+                                })()}
+                            </div>
+                            <div className="flex gap-3 mt-3 text-xs">
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-green-500"/><span className={sub}>Overtime earned</span></div>
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-500"/><span className={sub}>Time used</span></div>
+                            </div>
+                            <button onClick={()=>setShowAddRetro(!showAddRetro)} className="w-full mt-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-semibold shadow-md">+ Add Past Overtime</button>
+                            {showAddRetro && (
+                                <div className="mt-4 space-y-3 pt-4 border-t border-gray-200">
+                                    <div><label className={lbl}>Date</label><input type="date" value={retroDate} onChange={e=>setRetroDate(e.target.value)} className={`${inp} focus:border-indigo-500`}/></div>
+                                    <div><label className={lbl}>Finish Time</label><input type="time" value={retroEnd} onChange={e=>setRetroEnd(e.target.value)} className={`${inp} focus:border-indigo-500`}/></div>
+                                    <div>
+                                        <label className={lbl}>Lunch break?</label>
+                                        <div className="flex gap-3">
+                                            <button onClick={()=>setRetroLunch(true)} className={`flex-1 py-3 rounded-xl font-semibold transition-all ${retroLunch?"bg-gradient-to-r from-green-500 to-emerald-500 text-white":dk?"bg-slate-700 text-gray-400":"bg-gray-100 text-gray-600"}`}>
+                                                <div className="flex items-center justify-center gap-2"><Cof className="w-4 h-4"/>Yes</div>
+                                            </button>
+                                            <button onClick={()=>setRetroLunch(false)} className={`flex-1 py-3 rounded-xl font-semibold transition-all ${!retroLunch?"bg-gradient-to-r from-orange-500 to-red-500 text-white":dk?"bg-slate-700 text-gray-400":"bg-gray-100 text-gray-600"}`}>No Break</button>
+                                        </div>
+                                    </div>
+                                    <div><label className={lbl}>Notes (optional)</label><textarea value={retroNotes} onChange={e=>setRetroNotes(e.target.value)} placeholder="e.g. Emergency deployment" rows="2" className={`${inp} resize-none focus:border-indigo-500`}/></div>
+                                    <button onClick={logRetroactive} disabled={!retroDate||!retroEnd} className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50">Add Past Entry</button>
+                                </div>
+                            )}
+                            {selectedDateEntry && (
+                                <div className={`mt-4 p-4 rounded-xl ${dk?"bg-slate-700":"bg-gray-50"}`}>
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h4 className={`font-bold ${txt}`}>{selectedDateEntry[0].date}</h4>
+                                        <button onClick={()=>setSelectedDateEntry(null)} className={`text-lg ${sub}`}>✕</button>
+                                    </div>
+                                    {selectedDateEntry.map((entry,i)=>(
+                                        <div key={i} className="mb-2 last:mb-0">
+                                            {entry.type==="earned" && (<>
+                                                <p className="text-green-500 font-bold text-lg">+{entry.hours} hrs ({entry.days} days)</p>
+                                                <p className={`text-sm ${sub}`}>Finished at {entry.endTime}</p>
+                                                <p className={`text-xs ${dk?"text-gray-500":"text-gray-400"}`}>{entry.hadLunch?"✓ Lunch break":"✗ No lunch break"}</p>
+                                                {entry.notes && (
+                                                    <div className={`mt-2 p-3 rounded-lg ${dk?"bg-slate-600":"bg-indigo-50"}`}>
+                                                        <p className={`text-xs font-semibold mb-1 ${sub}`}>Notes:</p>
+                                                        <p className={`text-sm ${dk?"text-indigo-300":"text-indigo-700"}`}>{entry.notes}</p>
+                                                    </div>
+                                                )}
+                                            </>)}
+                                            {entry.type==="used" && <p className="text-red-500 font-bold">-{entry.days} days used</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Use Overtime */}
+                <div className={`${card} p-6`}>
+                    <div className="flex items-center mb-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${dk?"bg-blue-900/50":"bg-blue-100"}`}><Min className={`w-6 h-6 ${dk?"text-blue-400":"text-blue-500"}`}/></div>
+                        <h2 className={`text-xl font-bold ${txt}`}>Use Overtime</h2>
+                    </div>
+                    <div className="space-y-3">
+                        <div><label className={lbl}>Days to Use</label><input type="number" step="0.5" value={takeOffAmount} onChange={e=>setTakeOffAmount(e.target.value)} placeholder="0.5" className={`${inp} focus:border-blue-500`}/></div>
+                        <button onClick={takeTimeOff} disabled={!takeOffAmount} className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-semibold disabled:opacity-50 shadow-md">Use Time Off</button>
+                    </div>
+                </div>
+
+                {/* History */}
+                <div className={`${card} overflow-hidden`}>
+                    <button onClick={()=>setShowLog(!showLog)} className={`w-full p-6 flex items-center justify-between ${dk?"hover:bg-slate-700":"hover:bg-gray-50"}`}>
+                        <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${dk?"bg-green-900/50":"bg-green-100"}`}><Award className={`w-6 h-6 ${dk?"text-green-400":"text-green-500"}`}/></div>
+                            <h2 className={`text-xl font-bold ${txt}`}>History</h2>
+                        </div>
+                        <Chev className={`w-5 h-5 transition-transform ${showLog?"rotate-90":""} ${dk?"text-gray-500":"text-gray-400"}`}/>
+                    </button>
+                    {showLog && (
+                        <div className={`border-t ${dk?"border-slate-700":"border-gray-100"}`}>
+                            {logEntries.length===0 ? (
+                                <p className={`p-6 text-center ${sub}`}>No entries yet</p>
+                            ) : (
+                                <div className="max-h-96 overflow-y-auto">
+                                    {logEntries.map((entry,i)=>(
+                                        <div key={i} className={`p-4 border-b last:border-b-0 ${dk?"border-slate-700 hover:bg-slate-700":"border-gray-100 hover:bg-gray-50"}`}>
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className={`font-semibold ${txt}`}>{entry.date}</p>
+                                                    {entry.type==="earned" && (<>
+                                                        <p className={`text-sm ${sub}`}>Finished at {entry.endTime}</p>
+                                                        <p className={`text-xs ${dk?"text-gray-500":"text-gray-400"}`}>{entry.hadLunch?"✓ Lunch":"✗ No lunch"}</p>
+                                                        {entry.notes && <p className={`text-xs italic mt-1 ${dk?"text-indigo-400":"text-indigo-600"}`}>"{entry.notes}"</p>}
+                                                    </>)}
+                                                    {entry.type==="regular" && <p className={`text-sm ${sub}`}>Regular day</p>}
+                                                    {entry.type==="used" && <p className={`text-sm ${sub}`}>Time off used</p>}
+                                                </div>
+                                                <div className="text-right">
+                                                    {entry.type==="earned" && <><p className="text-green-500 font-bold">+{entry.hours} hrs</p><p className={`text-xs ${dk?"text-green-600":"text-green-400"}`}>{entry.days} days</p></>}
+                                                    {entry.type==="used" && <p className="text-red-500 font-bold">-{entry.days}d</p>}
+                                                    {entry.type==="regular" && <p className={`font-bold ${dk?"text-gray-600":"text-gray-400"}`}>0 hrs</p>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Backup */}
+                <div className={`${card} p-6`}>
+                    <h2 className={`text-xl font-bold mb-4 ${txt}`}>Backup & Export</h2>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                        <button onClick={exportJSON} className="flex items-center justify-center gap-2 bg-green-500 text-white py-3 rounded-xl font-semibold shadow-md"><DL className="w-4 h-4"/>Backup</button>
+                        <label className="flex items-center justify-center gap-2 bg-blue-500 text-white py-3 rounded-xl font-semibold cursor-pointer shadow-md">
+                            <UL className="w-4 h-4"/>Import<input type="file" accept=".json" onChange={importData} className="hidden"/>
+                        </label>
+                    </div>
+                    <button onClick={exportCSV} className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold shadow-md ${dk?"bg-slate-700 text-gray-300":"bg-gray-100 text-gray-700"}`}>
+                        <File className="w-4 h-4"/>Export as CSV (Excel)
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.render(<App/>, document.getElementById("root"));
+</script>
 </body>
 </html>
